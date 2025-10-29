@@ -1,0 +1,46 @@
+{
+  "testScenario": "Two-proof coherent test for same account",
+  "account": "0xFb93a8DcD5edc3FB6Cb34d77C6811835756c99A0",
+  
+  "step0_initialSetup": {
+    "description": "Set these values on Main_Contract after deployment",
+    "publicBalance": "100",
+    "privateBalanceCommitment": "6215144944274313431358390546859857435196839642684515675387282766541729288730",
+    "notes": "This commitment represents private balance of 0 with secret 99999"
+  },
+
+  "step1_burn": {
+    "description": "First transaction: Burn 40 tokens (public → private)",
+    "contract": "Burner_Verifier",
+    "method": "BurnerVerifier",
+    "proofFile": "proofs/generated_proofB_burn.json",
+    "publicSignalsFile": "proofs/generated_publicB_burn.json",
+    "expectedResult": {
+      "publicBalance": "60",
+      "privateBalance": "40",
+      "newCommitment": "16435358715507912739881275654385770681213764389879180474675594982483059447741"
+    }
+  },
+
+  "step2_mint": {
+    "description": "Second transaction: Mint 25 tokens (private → public)",
+    "contract": "Minter_Verifier",
+    "method": "MinterVerifier",
+    "proofFile": "proofs/generated_proofA_mint.json",
+    "publicSignalsFile": "proofs/generated_publicA_mint.json",
+    "expectedResult": {
+      "publicBalance": "85",
+      "privateBalance": "15",
+      "newCommitment": "20026553545680156500721779633019403414482557040109312483506003886488702860072"
+    }
+  },
+
+  "privateData_KEEP_SECRET": {
+    "warning": "NEVER share these values on-chain or with anyone",
+    "secret": "99999",
+    "randomness": "88888",
+    "initialPrivateBalance": "0",
+    "afterBurnPrivateBalance": "40",
+    "afterMintPrivateBalance": "15"
+  }
+}
