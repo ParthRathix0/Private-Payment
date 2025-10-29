@@ -1,0 +1,32 @@
+{
+  "initialSetup": {
+    "address": "0xFb93a8DcD5edc3FB6Cb34d77C6811835756c99A0",
+    "publicBalance": "100",
+    "privateBalanceCommitment": "6215144944274313431358390546859857435196839642684515675387282766541729288730",
+    "secret_KEEP_PRIVATE": "99999",
+    "randomness_KEEP_PRIVATE": "88888",
+    "actualPrivateBalance_KEEP_PRIVATE": "0"
+  },
+  "proofB_burn": {
+    "old_commitment": "6215144944274313431358390546859857435196839642684515675387282766541729288730",
+    "new_commitment": "16435358715507912739881275654385770681213764389879180474675594982483059447741",
+    "secret": "99999",
+    "randomness": "88888",
+    "private_balance": "0",
+    "spend_amount": "40"
+  },
+  "proofA_mint": {
+    "public_balance": "60",
+    "old_commitment": "16435358715507912739881275654385770681213764389879180474675594982483059447741",
+    "new_commitment": "20026553545680156500721779633019403414482557040109312483506003886488702860072",
+    "secret": "99999",
+    "randomness": "88888",
+    "private_balance": "40",
+    "spend_amount": "25"
+  },
+  "finalState": {
+    "publicBalance": "85",
+    "privateBalanceCommitment": "20026553545680156500721779633019403414482557040109312483506003886488702860072",
+    "actualPrivateBalance": "15"
+  }
+}
