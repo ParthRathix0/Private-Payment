@@ -56,5 +56,10 @@
   "packageManager": "yarn@3.2.3",
   "engines": {
     "node": ">=20.18.3"
+  },
+  "dependencies": {
+    "ethers": "^6.15.0",
+    "viem": "^2.38.5",
+    "wagmi": "^2.19.1"
   }
 }

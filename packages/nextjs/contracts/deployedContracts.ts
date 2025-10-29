@@ -78,7 +78,7 @@ const deployedContracts = {
           name: "verifier",
           outputs: [
             {
-              internalType: "contract Groth16Verifier",
+              internalType: "contract Groth16Verifier_Dummy",
               name: "",
               type: "address",
             },
@@ -483,7 +483,7 @@ const deployedContracts = {
           name: "A_verifier",
           outputs: [
             {
-              internalType: "contract Groth16Verifier",
+              internalType: "contract Groth16Verifier_Dummy",
               name: "",
               type: "address",
             },
@@ -496,7 +496,7 @@ const deployedContracts = {
           name: "B_verifier",
           outputs: [
             {
-              internalType: "contract Groth16VerifierB",
+              internalType: "contract Groth16VerifierB_Dummy",
               name: "",
               type: "address",
             },
