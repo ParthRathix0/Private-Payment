@@ -1,38 +1,43 @@
-# 🏗 Scaffold-ETH 2
+# LOKI
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
-</h4>
+<p>
+  <a href="./LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+  <img alt="Status" src="https://img.shields.io/badge/status-Research%2FPOC-purple">
+</p>
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+Private fund transfers powered by **zero-knowledge proofs**. Enables confidential payments where the transferred amount and sender–receiver linkage remain hidden, while correctness and one‑time spend are enforced on-chain.
 
-⚙️ Built using NextJS, RainbowKit, Hardhat, Wagmi, Viem, and Typescript.
+Users maintain two balance types:
+- **Public Balance:** Visible on-chain
+- **Private Balance:** Hidden via Poseidon hash commitments
 
-- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldeth.io/components/): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Local Faucet**: Quickly test your application with a burner wallet and local faucet.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
 
-![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
+## Features
+- Built on a modified version of EIP‑7503 flow
+- No sender/receiver linkage is preserved
+- No linkability through IP or timings
+- Transferred amount remains private
+- Nullifier prevents double spends
 
-## Requirements
+## How it works
 
-Before you begin, you need to install the following tools:
+![Core protocol](./assets/protocol.jpg)
 
-- [Node (>= v20.18.3)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
-- [Git](https://git-scm.com/downloads)
+At a glance:
+
+
+- `proof_A` proves Alice honestly deducted `n`
+- `proof_B` proves Bob correctly adds `n` to his private balance
+- A `nullifier` guarantees each proof can be used only once, No double spend/transfer.
 
 ## Quickstart
+Below are the minimal steps to run it on localhost. 
 
-To get started with Scaffold-ETH 2, follow the steps below:
 
 1. Install dependencies if it was skipped in CLI:
 
 ```
-cd my-dapp-example
+cd loki
 yarn install
 ```
 
@@ -58,23 +63,103 @@ This command deploys a test smart contract to the local network. The contract is
 yarn start
 ```
 
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
-
-Run smart contract test with `yarn hardhat:test`
-
-- Edit your smart contracts in `packages/hardhat/contracts`
-- Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
-- Edit your deployment scripts in `packages/hardhat/deploy`
+Visit your app on: `http://localhost:3000`.
+## Contracts
+Contracts live in `./packages/hardhat/contract` . Use a modern Hardhat toolchain. See the folders for tasks such as build, test, and deploy.
 
 
-## Documentation
+### System Architecture
 
-Visit our [docs](https://docs.scaffoldeth.io) to learn how to start building with Scaffold-ETH 2.
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      Main_Contract                          │
+│  • Public/Private Balance Management                        │
+│  • Nullifier Tracking (double-spend prevention)             │
+│  • Owner: 0xFb93a8DcD5edc3FB6Cb34d77C6811835756c99A0        │
+└───────────────┬──────────────────────┬──────────────────────┘
+                │                      │
+        ┌───────▼─────┐        ┌───────▼─────┐
+        │  Burn Path  │        │  Mint Path  │
+        └───────┬─────┘        └───────┬─────┘
+                │                      │
+    ┌───────────▼───────────┐  ┌───────▼─────────────────┐
+    │  Burner_Verifier      │  │  Minter_Verifier        │
+    │  • Circuit A Proof    │  │  • Circuit A + B Proofs │
+    │  • Groth16Verifier    │  │  • Dual Verification    │
+    └───────────────────────┘  └─────────────────────────┘
 
-To know more about its features, check out our [website](https://scaffoldeth.io).
+```
+### Circuit A: `update_balance.circom` (Burner/Sender Side)
 
-## Contributing to Scaffold-ETH 2
+**Purpose:** Proves correct balance state transitions for burn/mint operations.
 
-We welcome contributions to Scaffold-ETH 2!
+**Inputs:**
 
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
+```circom
+signal input pub_balance;           // Current public balance
+signal input priv_balance;          // Current private balance
+signal input new_priv_balance;      // New private balance after operation
+signal input r;                     // Randomness for old commitment
+signal input r_new;                 // Randomness for new commitment
+signal input secret;                // User secret (nullifier preimage)
+```
+
+**Outputs (5 public signals):**
+
+```circom
+signal output old_commitment;       // Commit(priv_balance, r)
+signal output new_commitment;       // Commit(new_priv_balance, r_new)
+signal output curr_pub_balance;     // = pub_balance
+signal output new_priv_balance_out; // = new_priv_balance
+signal output nullifier;            // Hash(secret)
+```
+
+**Constraints:**
+
+- Old commitment = Poseidon(priv_balance, r)
+- New commitment = Poseidon(new_priv_balance, r_new)
+- Nullifier = Poseidon(secret)
+- All values properly constrained
+
+**Used by:** `Groth16Verifier` (deployed on-chain)
+
+---
+
+### Circuit B: `proofB.circom` (Minter/Receiver Side)
+
+**Purpose:** Validates transfer amounts using commitment scheme.
+
+**Inputs:**
+
+```circom
+signal input priv_balance;          // Current private balance
+signal input new_priv_balance;      // New private balance
+signal input r;                     // Randomness for old commitment
+signal input r_new;                 // Randomness for new commitment
+signal input amount;                // Transfer amount
+```
+
+**Outputs (3 public signals):**
+
+```circom
+signal output old_commitment;       // Commit(priv_balance, r)
+signal output new_commitment;       // Commit(new_priv_balance, r_new)
+signal output amount_hash;          // Poseidon(amount)
+```
+
+**Constraints:**
+
+- Old commitment = Poseidon(priv_balance, r)
+- New commitment = Poseidon(new_priv_balance, r_new)
+- Amount hash = Poseidon(amount)
+- Balance constraints enforced
+
+**Used by:** `Groth16VerifierB` (deployed on-chain)
+
+---
+
+## Security properties
+- Privacy: amount, sender, and receiver are not linkable on‑chain
+- Integrity: proofs enforce correct balance updates
+- Unlinkability: network‑level correlation reduced (no timing/IP linkage in protocol design)
+- One‑time spend: nullifiers prevent note reuse
