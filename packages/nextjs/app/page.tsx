@@ -20,9 +20,17 @@ const Dashboard = () => {
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [contract, setContract] = useState<ethers.Contract | null>(null);
+  const [ethBalance, setEthBalance] = useState("0");
+  const [recipientAddress, setRecipientAddress] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     connectWallet();
+    return () => {
+      if (contract) {
+        contract.removeAllListeners();
+      }
+    };
   }, []);
 
   const connectWallet = async () => {
@@ -32,6 +40,10 @@ const Dashboard = () => {
         const signer = await provider.getSigner();
         const address = await signer.getAddress();
         setUserAddress(address);
+
+        // Get ETH balance
+        const balance = await provider.getBalance(address);
+        setEthBalance(ethers.formatEther(balance));
 
         const contractInstance = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
         setContract(contractInstance);
@@ -43,12 +55,42 @@ const Dashboard = () => {
         contractInstance.on("Transfer", async (from, to) => {
           if (from === address || to === address) {
             await updateBalances(contractInstance, address);
+            const newBalance = await provider.getBalance(address);
+            setEthBalance(ethers.formatEther(newBalance));
           }
+        });
+
+        // Listen for account changes
+        window.ethereum.on("accountsChanged", async (accounts: string[]) => {
+          if (accounts.length > 0) {
+            const newAddress = accounts[0];
+            setUserAddress(newAddress);
+            const newBalance = await provider.getBalance(newAddress);
+            setEthBalance(ethers.formatEther(newBalance));
+            await updateBalances(contractInstance, newAddress);
+          } else {
+            resetState();
+          }
+        });
+
+        // Listen for network changes
+        window.ethereum.on("chainChanged", () => {
+          window.location.reload();
         });
       }
     } catch (error) {
       console.error("Error connecting to wallet:", error);
+      setError("Failed to connect wallet");
     }
+  };
+
+  const resetState = () => {
+    setUserAddress("");
+    setEthBalance("0");
+    setPublicBalance("0");
+    setPrivateBalance("0");
+    setContract(null);
+    setError("");
   };
 
   const updateBalances = async (contractInstance: ethers.Contract, address: string) => {
@@ -59,27 +101,31 @@ const Dashboard = () => {
       setPrivateBalance(ethers.formatEther(privateBal));
     } catch (error) {
       console.error("Error updating balances:", error);
+      setError("Failed to update balances");
     }
   };
 
   const handleTransfer = async (isPrivate: boolean) => {
-    if (!contract || !amount) return;
+    if (!contract || !amount || !recipientAddress) {
+      setError("Please fill in all fields");
+      return;
+    }
 
     setLoading(true);
+    setError("");
+
     try {
       const tx = isPrivate
-        ? await contract.privateTransfer(
-            "RECIPIENT_ADDRESS",
-            ethers.parseEther(amount),
-            ethers.randomBytes(32), // Example commitment
-          )
-        : await contract.transfer("RECIPIENT_ADDRESS", ethers.parseEther(amount));
+        ? await contract.privateTransfer(recipientAddress, ethers.parseEther(amount), ethers.randomBytes(32))
+        : await contract.transfer(recipientAddress, ethers.parseEther(amount));
 
       await tx.wait();
       setShowSendModal(false);
       setAmount("");
+      setRecipientAddress("");
     } catch (error) {
       console.error("Transfer failed:", error);
+      setError("Transfer failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -99,18 +145,25 @@ const Dashboard = () => {
           <div className="flex justify-between items-center mb-6">
             <div>
               <h2 className="text-2xl font-semibold">Account Overview</h2>
-              <p className="text-gray-500">View your public and private balances</p>
+              <p className="text-gray-500">View your balances</p>
             </div>
             {!userAddress ? (
               <button onClick={connectWallet} className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800">
                 Connect Wallet
               </button>
             ) : (
-              <p className="text-sm text-gray-500">
-                {userAddress.slice(0, 6)}...{userAddress.slice(-4)}
-              </p>
+              <div className="text-right">
+                <p className="text-sm text-gray-500 mb-1">
+                  {userAddress.slice(0, 6)}...{userAddress.slice(-4)}
+                </p>
+                <p className="text-sm font-semibold">{ethBalance} ETH</p>
+              </div>
             )}
           </div>
+
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6">{error}</div>
+          )}
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* Public Balance */}
@@ -174,6 +227,17 @@ const Dashboard = () => {
             </div>
             <div className="space-y-6">
               <div>
+                <label className="block text-sm text-gray-600 mb-2">Recipient Address</label>
+                <input
+                  type="text"
+                  className="w-full p-3 border rounded-lg"
+                  placeholder="0x..."
+                  value={recipientAddress}
+                  onChange={e => setRecipientAddress(e.target.value)}
+                  disabled={loading}
+                />
+              </div>
+              <div>
                 <label className="block text-sm text-gray-600 mb-2">Amount</label>
                 <input
                   type="text"
@@ -186,7 +250,7 @@ const Dashboard = () => {
               </div>
               <div className="space-y-4">
                 <button
-                  className="w-full bg-gray-50 p-4 rounded-lg text-left flex justify-between items-center"
+                  className="w-full bg-gray-50 p-4 rounded-lg text-left flex justify-between items-center hover:bg-gray-100"
                   onClick={() => handleTransfer(false)}
                   disabled={loading}
                 >
@@ -197,7 +261,7 @@ const Dashboard = () => {
                   <span className="text-gray-400">{publicBalance} ETH</span>
                 </button>
                 <button
-                  className="w-full bg-gray-50 p-4 rounded-lg text-left flex justify-between items-center"
+                  className="w-full bg-gray-50 p-4 rounded-lg text-left flex justify-between items-center hover:bg-gray-100"
                   onClick={() => handleTransfer(true)}
                   disabled={loading}
                 >
