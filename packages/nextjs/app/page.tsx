@@ -1,111 +1,70 @@
 "use client";
 
+import Link from "next/link";
 import type { NextPage } from "next";
-import { useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
+import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-eth";
-
-const toHex = (buffer: ArrayBuffer) => {
-  return Array.from(new Uint8Array(buffer))
-    .map(b => b.toString(16).padStart(2, "0"))
-    .join("");
-};
 
 const Home: NextPage = () => {
   const { address: connectedAddress } = useAccount();
 
-  const [publicBalance] = useState("125.50");
-  const [privateBalance] = useState("89.75");
-  const [randomness, setRandomness] = useState("owd3j2g8s9");
-  const [sha256, setSha256] = useState("");
-  const [copied, setCopied] = useState<string | null>(null);
-
-  useEffect(() => {
-    // compute sha256 of randomness
-    const compute = async () => {
-      try {
-        const enc = new TextEncoder();
-        const data = enc.encode(randomness);
-        const hash = await crypto.subtle.digest("SHA-256", data);
-        setSha256(toHex(hash));
-      } catch (e) {
-        setSha256("");
-      }
-    };
-    compute();
-  }, [randomness]);
-
-  const copyToClipboard = async (text: string, key: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(key);
-      setTimeout(() => setCopied(null), 1500);
-    } catch (e) {
-      console.error("copy failed", e);
-    }
-  };
-
   return (
-    <div className="flex flex-col items-center w-full pt-12 px-6">
-      <div className="max-w-5xl w-full">
-        <h2 className="text-2xl font-semibold mb-2">Account Overview</h2>
-        <p className="text-sm text-muted mb-6">View your public and private balances</p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Public Balance Card */}
-          <div className="bg-base-100 rounded-2xl p-8 shadow-sm">
-            <h3 className="text-sm text-gray-500 mb-4">Public Balance</h3>
-            <div className="text-4xl font-bold mb-2">${publicBalance}</div>
-            <p className="text-sm text-gray-400">Available across all chains</p>
+    <>
+      <div className="flex items-center flex-col grow pt-10">
+        <div className="px-5">
+          <h1 className="text-center">
+            <span className="block text-2xl mb-2">Welcome to</span>
+            <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
+          </h1>
+          <div className="flex justify-center items-center space-x-2 flex-col">
+            <p className="my-2 font-medium">Connected Address:</p>
+            <Address address={connectedAddress} />
           </div>
-
-          {/* Private Balance Card */}
-          <div className="bg-base-100 rounded-2xl p-8 shadow-sm">
-            <h3 className="text-sm text-gray-500 mb-4">Private Balance</h3>
-            <div className="text-4xl font-bold mb-4">${privateBalance}</div>
-
-            <label className="block text-xs text-gray-500 mb-2">Randomness:</label>
-            <div className="flex items-center gap-2 mb-4">
-              <input
-                value={randomness}
-                onChange={e => setRandomness(e.target.value)}
-                className="flex-1 input input-bordered bg-base-200"
-              />
-              <button
-                onClick={() => copyToClipboard(randomness, "randomness")}
-                className="btn btn-ghost btn-square"
-                aria-label="Copy randomness"
-              >
-                {copied === "randomness" ? "✓" : "Copy"}
-              </button>
-            </div>
-
-            <label className="block text-xs text-gray-500 mb-2">SHA256 Hash:</label>
-            <div className="flex items-start gap-2 mb-4">
-              <textarea
-                readOnly
-                value={sha256}
-                className="flex-1 textarea textarea-ghost bg-base-200 h-24 resize-none"
-              />
-              <button
-                onClick={() => copyToClipboard(sha256, "sha256")}
-                className="btn btn-ghost btn-square"
-                aria-label="Copy sha256"
-              >
-                {copied === "sha256" ? "✓" : "Copy"}
-              </button>
-            </div>
-
-            <p className="text-sm text-gray-400">Shielded funds with cryptographic commitment</p>
-          </div>
+          <p className="text-center text-lg">
+            Get started by editing{" "}
+            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
+              packages/nextjs/app/page.tsx
+            </code>
+          </p>
+          <p className="text-center text-lg">
+            Edit your smart contract{" "}
+            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
+              YourContract.sol
+            </code>{" "}
+            in{" "}
+            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
+              packages/hardhat/contracts
+            </code>
+          </p>
         </div>
 
-        <div className="flex gap-4 mt-8 justify-center md:justify-start">
-          <button className="btn btn-neutral px-8">Send</button>
-          <button className="btn btn-outline px-6">Generate Proof</button>
+        <div className="grow bg-base-300 w-full mt-16 px-8 py-12">
+          <div className="flex justify-center items-center gap-12 flex-col md:flex-row">
+            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
+              <BugAntIcon className="h-8 w-8 fill-secondary" />
+              <p>
+                Tinker with your smart contract using the{" "}
+                <Link href="/debug" passHref className="link">
+                  Debug Contracts
+                </Link>{" "}
+                tab.
+              </p>
+            </div>
+            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
+              <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
+              <p>
+                Explore your local transactions with the{" "}
+                <Link href="/blockexplorer" passHref className="link">
+                  Block Explorer
+                </Link>{" "}
+                tab.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
