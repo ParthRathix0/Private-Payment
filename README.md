@@ -19,6 +19,12 @@ Users maintain two balance types:
 - Transferred amount remains private
 - Nullifier prevents double spends
 
+## Why Loki
+- Previous privacy enhancing protocol were either completely untrackable or a little to public but, loki provides a perfect balance between enhanced privacy and governmental control which none could achieve yet
+- Enhances the privacy of users by highly increasing the computation which most people can't do
+- Government if wants can track a particular address and its transactions by performing high computations and thus retain the control
+
+  
 ## How it works
 
 ![Core protocol](./assets/protocol.jpg)
