@@ -1,0 +1,175 @@
+╔══════════════════════════════════════════════════════════════╗
+║                  🎉 DUMMY PROOFS READY! 🎉                   ║
+╚══════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────┐
+│ 🚀 QUICK START (3 Commands)                                  │
+└──────────────────────────────────────────────────────────────┘
+
+Terminal 1:
+  cd packages/hardhat && yarn chain
+
+Terminal 2:
+  cd packages/hardhat
+  yarn deploy --tags TestMode --reset
+  npx hardhat run scripts/testBurnWithDummyProof.ts --network localhost
+
+Result: ✅ Balance changes from (4500, 5500) to (4500, 5600)
+
+┌──────────────────────────────────────────────────────────────┐
+│ 📦 WHAT WAS CREATED                                          │
+└──────────────────────────────────────────────────────────────┘
+
+NEW FILES (for testing):
+  ✅ contracts/Verifier1_Dummy.sol          - Dummy verifier A
+  ✅ contracts/verifier_B1_Dummy.sol        - Dummy verifier B
+  ✅ deploy/01_deploy_test_mode.ts          - Test deployment
+  ✅ scripts/testBurnWithDummyProof.ts      - Automated test
+  ✅ DUMMY_PROOF_GUIDE.md                   - Complete guide
+
+PRESERVED (original files):
+  ✅ contracts/Verifier1.sol                - Real verifier A
+  ✅ contracts/verifier_B1.sol              - Real verifier B
+  ✅ deploy/00_deploy_your_contract.ts      - Production deploy
+  ✅ All other contracts                    - Untouched
+
+Nothing was deleted! ✅
+
+┌──────────────────────────────────────────────────────────────┐
+│ 🧪 MANUAL TESTING (Hardhat Console)                          │
+└──────────────────────────────────────────────────────────────┘
+
+npx hardhat console --network localhost
+
+const main = await ethers.getContract("Main_Contract");
+const burner = await ethers.getContract("Burner_Verifier");
+
+// Set balance
+await main.initialSetbalance("0xFb93a8DcD5edc3FB6Cb34d77C6811835756c99A0", 4500, 5500);
+
+// Burn 100 tokens
+await burner.BurnerVerifier({
+    A: [0, 0],
+    B: [[0, 0], [0, 0]],
+    C: [0, 0],
+    _publicSignals: ["4500", "5500", "5600", "123", "789"]
+});
+
+// Check result
+const bal = await main.getbalance("0xFb93a8DcD5edc3FB6Cb34d77C6811835756c99A0");
+console.log("Pub:", bal.pub_balance.toString(), "Priv:", bal.priv_balance.toString());
+
+Expected: Pub: 4500 Priv: 5600 ✅
+
+┌──────────────────────────────────────────────────────────────┐
+│ 🎯 YOUR TEST SCENARIO                                        │
+└──────────────────────────────────────────────────────────────┘
+
+Account: 0xFb93a8DcD5edc3FB6Cb34d77C6811835756c99A0
+
+BEFORE:
+  Public:  4500
+  Private: 5500
+
+OPERATION: Burn 100 tokens
+
+AFTER:
+  Public:  4500 (unchanged)
+  Private: 5600 (+100)
+
+Dummy Proof Used:
+  A: [0, 0]
+  B: [[0, 0], [0, 0]]
+  C: [0, 0]
+  Signals: ["4500", "5500", "5600", "123456789", "987654321"]
+
+┌──────────────────────────────────────────────────────────────┐
+│ ❓ DO YOU NEED CHAIN PARAMETERS?                             │
+└──────────────────────────────────────────────────────────────┘
+
+NO! ✅
+
+For dummy proofs, you DON'T need:
+  ❌ Block numbers
+  ❌ Timestamps
+  ❌ Chain IDs
+  ❌ Gas prices
+  ❌ Nonces
+
+The dummy verifier ignores the proof and returns true!
+
+Only the PUBLIC SIGNALS matter:
+  ✅ Current balances (checked by contract)
+  ✅ New balance (what you want)
+  ✅ Nullifier (for tracking)
+
+┌──────────────────────────────────────────────────────────────┐
+│ 🔄 SWITCHING MODES                                           │
+└──────────────────────────────────────────────────────────────┘
+
+TEST MODE (dummy verifiers):
+  yarn deploy --tags TestMode --reset
+
+PRODUCTION MODE (real verifiers):
+  yarn deploy --tags ZKPrivacy --reset
+
+┌──────────────────────────────────────────────────────────────┐
+│ ⚠️  IMPORTANT WARNINGS                                        │
+└──────────────────────────────────────────────────────────────┘
+
+DUMMY VERIFIERS ARE FOR TESTING ONLY!
+
+DO NOT use on:
+  ❌ Testnets (Sepolia, Goerli, etc.)
+  ❌ Mainnet
+  ❌ Any public network
+
+ONLY use on:
+  ✅ Local Hardhat network
+  ✅ Your development machine
+
+Why? Dummy verifiers accept ANY proof = ZERO SECURITY!
+
+┌──────────────────────────────────────────────────────────────┐
+│ 📚 DOCUMENTATION                                             │
+└──────────────────────────────────────────────────────────────┘
+
+Main Guides:
+  📖 SETUP_COMPLETE.md              - This summary
+  📖 DUMMY_PROOF_GUIDE.md           - Complete testing guide
+  📖 BURN_100_TOKENS_GUIDE.md       - Your specific scenario
+  📖 DEPLOYMENT_GUIDE.md            - Production deployment
+  📖 CONTRACT_INTERACTION_GUIDE.md  - API reference
+
+┌──────────────────────────────────────────────────────────────┐
+│ ✅ WHAT YOU CAN DO NOW                                       │
+└──────────────────────────────────────────────────────────────┘
+
+IMMEDIATE:
+  ✅ Test burn operations (any amount)
+  ✅ Test minter operations
+  ✅ Test nullifier tracking
+  ✅ Debug contract logic
+  ✅ Build frontend UI
+  ✅ Test user flows
+
+LATER (for production):
+  ⏳ Create ZK circuits
+  ⏳ Generate proving keys
+  ⏳ Replace dummy verifiers
+  ⏳ Deploy to testnet
+
+┌──────────────────────────────────────────────────────────────┐
+│ 🎊 YOU'RE ALL SET!                                           │
+└──────────────────────────────────────────────────────────────┘
+
+Run the test now:
+  cd packages/hardhat
+  yarn deploy --tags TestMode --reset
+  npx hardhat run scripts/testBurnWithDummyProof.ts --network localhost
+
+See it work! 🚀
+
+╔══════════════════════════════════════════════════════════════╗
+║  Need help? Check DUMMY_PROOF_GUIDE.md for more details!    ║
+╚══════════════════════════════════════════════════════════════╝

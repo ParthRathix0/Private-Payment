@@ -4,6 +4,586 @@
  */
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
-const deployedContracts = {} as const;
+const deployedContracts = {
+  31337: {
+    Burner_Verifier: {
+      address: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_contract",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_verifier",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [
+            {
+              components: [
+                {
+                  internalType: "uint256[2]",
+                  name: "A",
+                  type: "uint256[2]",
+                },
+                {
+                  internalType: "uint256[2][2]",
+                  name: "B",
+                  type: "uint256[2][2]",
+                },
+                {
+                  internalType: "uint256[2]",
+                  name: "C",
+                  type: "uint256[2]",
+                },
+                {
+                  internalType: "uint256[]",
+                  name: "_publicSignals",
+                  type: "uint256[]",
+                },
+              ],
+              internalType: "struct Proof",
+              name: "proof",
+              type: "tuple",
+            },
+          ],
+          name: "BurnerVerifier",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "real_contract",
+          outputs: [
+            {
+              internalType: "contract Main_Contract",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "verifier",
+          outputs: [
+            {
+              internalType: "contract Groth16Verifier",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 17,
+    },
+    Groth16Verifier: {
+      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "uint256[2]",
+              name: "_pA",
+              type: "uint256[2]",
+            },
+            {
+              internalType: "uint256[2][2]",
+              name: "_pB",
+              type: "uint256[2][2]",
+            },
+            {
+              internalType: "uint256[2]",
+              name: "_pC",
+              type: "uint256[2]",
+            },
+            {
+              internalType: "uint256[5]",
+              name: "_pubSignals",
+              type: "uint256[5]",
+            },
+          ],
+          name: "verifyProof",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 1,
+    },
+    Groth16VerifierB: {
+      address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "uint256[2]",
+              name: "_pA",
+              type: "uint256[2]",
+            },
+            {
+              internalType: "uint256[2][2]",
+              name: "_pB",
+              type: "uint256[2][2]",
+            },
+            {
+              internalType: "uint256[2]",
+              name: "_pC",
+              type: "uint256[2]",
+            },
+            {
+              internalType: "uint256[3]",
+              name: "_pubSignals",
+              type: "uint256[3]",
+            },
+          ],
+          name: "verifyProof",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 3,
+    },
+    Groth16VerifierB_Dummy: {
+      address: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "uint256[2]",
+              name: "a",
+              type: "uint256[2]",
+            },
+            {
+              internalType: "uint256[2][2]",
+              name: "b",
+              type: "uint256[2][2]",
+            },
+            {
+              internalType: "uint256[2]",
+              name: "c",
+              type: "uint256[2]",
+            },
+            {
+              internalType: "uint256[3]",
+              name: "input",
+              type: "uint256[3]",
+            },
+          ],
+          name: "verifyProof",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "r",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 15,
+    },
+    Groth16Verifier_Dummy: {
+      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "uint256[2]",
+              name: "a",
+              type: "uint256[2]",
+            },
+            {
+              internalType: "uint256[2][2]",
+              name: "b",
+              type: "uint256[2][2]",
+            },
+            {
+              internalType: "uint256[2]",
+              name: "c",
+              type: "uint256[2]",
+            },
+            {
+              internalType: "uint256[5]",
+              name: "input",
+              type: "uint256[5]",
+            },
+          ],
+          name: "verifyProof",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "r",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 13,
+    },
+    Main_Contract: {
+      address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      abi: [
+        {
+          inputs: [],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [],
+          name: "burn_controller",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "curr_pub_balance",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "new_priv_balance",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "nullifier",
+              type: "uint256",
+            },
+          ],
+          name: "burner",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getbalance",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "pub_balance",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "priv_balance",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct balance_data",
+              name: "",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "pub_balance",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "priv_balance",
+              type: "uint256",
+            },
+          ],
+          name: "initialSetbalance",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "mint_controller",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "curr_pub_balance",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "new_priv_balance",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "nullifier",
+              type: "uint256",
+            },
+          ],
+          name: "minter",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "owner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_controller",
+              type: "address",
+            },
+          ],
+          name: "setBurnController",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_controller",
+              type: "address",
+            },
+          ],
+          name: "setMintController",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newOwner",
+              type: "address",
+            },
+          ],
+          name: "transferOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 5,
+    },
+    Minter_Verifier: {
+      address: "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_contract",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_verifier",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_verifierB",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [],
+          name: "A_verifier",
+          outputs: [
+            {
+              internalType: "contract Groth16Verifier",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "B_verifier",
+          outputs: [
+            {
+              internalType: "contract Groth16VerifierB",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              components: [
+                {
+                  internalType: "uint256[2]",
+                  name: "A",
+                  type: "uint256[2]",
+                },
+                {
+                  internalType: "uint256[2][2]",
+                  name: "B",
+                  type: "uint256[2][2]",
+                },
+                {
+                  internalType: "uint256[2]",
+                  name: "C",
+                  type: "uint256[2]",
+                },
+                {
+                  internalType: "uint256[]",
+                  name: "_publicSignals",
+                  type: "uint256[]",
+                },
+              ],
+              internalType: "struct Proof",
+              name: "proof_A",
+              type: "tuple",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256[2]",
+                  name: "A",
+                  type: "uint256[2]",
+                },
+                {
+                  internalType: "uint256[2][2]",
+                  name: "B",
+                  type: "uint256[2][2]",
+                },
+                {
+                  internalType: "uint256[2]",
+                  name: "C",
+                  type: "uint256[2]",
+                },
+                {
+                  internalType: "uint256[]",
+                  name: "_publicSignals",
+                  type: "uint256[]",
+                },
+              ],
+              internalType: "struct ProofB",
+              name: "proof_B",
+              type: "tuple",
+            },
+          ],
+          name: "Minter_VerifierVerifier",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "real_contract",
+          outputs: [
+            {
+              internalType: "contract Main_Contract",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 19,
+    },
+  },
+} as const;
 
 export default deployedContracts satisfies GenericContractsDeclaration;
